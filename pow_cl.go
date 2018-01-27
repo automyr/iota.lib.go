@@ -1,3 +1,4 @@
+// nope
 // +build gpu
 
 /*
@@ -29,6 +30,7 @@ package giota
 import (
 	"encoding/binary"
 	"errors"
+	"fmt"
 	"sync/atomic"
 
 	"github.com/iotaledger/giota/cl"
@@ -225,7 +227,8 @@ func loopCL(binfo []bufferInfo) (Trytes, error) {
 				}
 
 				if totalmem += msize; totalmem > mmax {
-					return "", errors.New("max memory passed")
+					//return "", errors.New("max memory passed")
+					fmt.Println("max memory passed")
 				}
 
 				mobj[i], err = cont.CreateEmptyBuffer(inf.flag, int(msize))
