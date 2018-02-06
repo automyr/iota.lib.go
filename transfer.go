@@ -30,8 +30,12 @@ import (
 	"time"
 )
 
-// Number of random walks to perform. Currently IRI limits it to 5 to 27
-const NumberOfWalks = 5
+const (
+	// Number of random walks to perform. Currently IRI limits it to 5 to 27
+	NumberOfWalks = 5
+
+	maxTimestampTrytes = "L99999999"
+)
 
 // GetUsedAddress generates a new address which is not found in the tangle
 // and returns its new address and used addresses.
@@ -328,6 +332,11 @@ func doPow(tra *GetTransactionsToApproveResponse, depth int64, trytes []Transact
 			trytes[i].TrunkTransaction = prev
 			trytes[i].BranchTransaction = tra.TrunkTransaction
 		}
+
+		timestamp := Int2Trits(time.Now().UnixNano()/1000000, TimestampTrinarySize).Trytes()
+		trytes[i].AttachmentTimestamp = timestamp
+		trytes[i].AttachmentTimestampLowerBound = ""
+		trytes[i].AttachmentTimestampUpperBound = maxTimestampTrytes
 
 		trytes[i].Nonce, err = pow(trytes[i].Trytes(), int(mwm))
 		if err != nil {
