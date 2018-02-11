@@ -30,12 +30,11 @@ import (
 	"time"
 )
 
-<<<<<<< HEAD
 const (
 	maxTimestampTrytes = "L99999999"
 
-        // Number of random walks to perform. Currently IRI limits it to 5 to 27
-        const NumberOfWalks = 5
+	// Number of random walks to perform. Currently IRI limits it to 5 to 27
+	NumberOfWalks = 5
 )
 
 // GetUsedAddress generates a new address which is not found in the tangle
