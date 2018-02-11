@@ -30,8 +30,12 @@ import (
 	"time"
 )
 
+<<<<<<< HEAD
 const (
 	maxTimestampTrytes = "L99999999"
+
+        // Number of random walks to perform. Currently IRI limits it to 5 to 27
+        const NumberOfWalks = 5
 )
 
 // GetUsedAddress generates a new address which is not found in the tangle
@@ -347,7 +351,7 @@ func doPow(tra *GetTransactionsToApproveResponse, depth int64, trytes []Transact
 
 // SendTrytes does attachToTangle and finally, it broadcasts the transactions.
 func SendTrytes(api *API, depth int64, trytes []Transaction, mwm int64, pow PowFunc) error {
-	tra, err := api.GetTransactionsToApprove(depth)
+	tra, err := api.GetTransactionsToApprove(depth, NumberOfWalks, "")
 	if err != nil {
 		return err
 	}
