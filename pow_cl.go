@@ -1,3 +1,4 @@
+// nope
 // +build gpu
 
 /*
@@ -31,9 +32,8 @@ import (
 	"errors"
 	"fmt"
 	"sync/atomic"
-	"unsafe"
 
-	"github.com/jgillich/go-opencl/cl"
+	"github.com/iotaledger/giota/cl"
 )
 
 var loopcount byte = 32
@@ -86,9 +86,8 @@ func exec(
 			return err
 		}
 		defer ev2.Release()
-		dataPtr := unsafe.Pointer(&found[0])
-		dataSize := int(unsafe.Sizeof(found[0])) * len(found)
-		ev3, err := que.EnqueueReadBuffer(mobj[6], true, 0, dataSize, dataPtr, []*cl.Event{ev2})
+
+		ev3, err := que.EnqueueReadBufferBytes(mobj[6], true, found, []*cl.Event{ev2})
 		if err != nil {
 			return err
 		}
@@ -111,9 +110,7 @@ func exec(
 	defer ev4.Release()
 
 	result := make([]byte, HashSize*8)
-	dataPtr := unsafe.Pointer(&result[0])
-	dataSize := int(unsafe.Sizeof(result[0])) * len(result)
-	ev5, err := que.EnqueueReadBuffer(mobj[0], true, 0, dataSize, dataPtr, []*cl.Event{ev4})
+	ev5, err := que.EnqueueReadBufferBytes(mobj[0], true, result, []*cl.Event{ev4})
 	if err != nil {
 		return err
 	}
@@ -243,17 +240,13 @@ func loopCL(binfo []bufferInfo) (Trytes, error) {
 					var ev *cl.Event
 					switch {
 					case isLittle:
-						dataPtr := unsafe.Pointer(&inf.data[0])
-						dataSize := int(unsafe.Sizeof(inf.data[0])) * len(inf.data)
-						ev, err = que.EnqueueWriteBuffer(mobj[i], true, 0, dataSize, dataPtr, nil)
+						ev, err = que.EnqueueWriteBufferBytes(mobj[i], true, inf.data, nil)
 					default:
 						data := make([]byte, len(inf.data))
 						for i := range inf.data {
 							data[i] = inf.data[len(inf.data)-i-1]
 						}
-						dataPtr := unsafe.Pointer(&data[0])
-						dataSize := int(unsafe.Sizeof(data[0])) * len(data)
-						ev, err = que.EnqueueWriteBuffer(mobj[i], true, 0, dataSize, dataPtr, nil)
+						ev, err = que.EnqueueWriteBufferBytes(mobj[i], true, data, nil)
 					}
 
 					if err != nil {
